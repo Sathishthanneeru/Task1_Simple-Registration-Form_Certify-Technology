@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Certify Technology</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <div class="welcome-card">
+      <h1 id="welcomeMsg">Welcome to Certify Technology</h1>
+      <p class="tagline">Empowering my web development journey as a intern 🚀</p>
+      <button id="logoutBtn" class="btn">Logout</button>
+    </div>
+  </div>
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("welcomeMsg").textContent = 
+        `Welcome ${currentUser.split('@')[0]} to Certify Technology!`;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("currentUser");
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>

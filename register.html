@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | Certify Technology</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="form-card">
+      <h2>Create Account</h2>
+      <p class="subtitle">Join Certify Technology</p>
+
+      <form id="registerForm">
+        <input type="text" id="regName" placeholder="Full Name" required />
+        <input type="email" id="regEmail" placeholder="Email" required />
+        <input type="password" id="regPassword" placeholder="Password (min 6 chars)" required />
+        <p class="error-message" id="regError"></p>
+        <button type="submit" class="btn">Register</button>
+      </form>
+
+      <p class="switch-page">
+        Already have an account? <a href="index.html">Login here</a>
+      </p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
