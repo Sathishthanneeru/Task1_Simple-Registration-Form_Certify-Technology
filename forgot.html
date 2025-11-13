@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forgot Password | Certify Technology</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="form-card">
+      <h2>Forgot Password</h2>
+      <p class="subtitle">Enter your registered email to get an OTP</p>
+
+      <div class="error-message" id="error"></div>
+
+      <!-- Step 1: Email Verification -->
+      <div id="email-section">
+        <input type="email" id="email" placeholder="Enter your registered email" required />
+        <button class="btn" onclick="sendOTP()">Send OTP</button>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="otp-section" style="display: none;">
+        <input type="text" id="otpInput" placeholder="Enter 6-digit OTP" maxlength="6" />
+        <button class="btn" onclick="verifyOTP()">Verify OTP</button>
+        <p class="subtitle" id="timer"></p>
+      </div>
+
+      <!-- Step 3: Reset Password -->
+      <div id="reset-section" style="display: none;">
+        <input type="password" id="newPassword" placeholder="Enter new password" required />
+        <button class="btn" onclick="resetPassword()">Reset Password</button>
+      </div>
+
+      <div class="switch-page">
+        <p>Back to <a href="index.html">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let generatedOTP = null;
+    let verifiedEmail = null;
+    let timerInterval;
+
+    // Generate and "Send" OTP
+    function sendOTP() {
+      const email = document.getElementById("email").value.trim();
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find((u) => u.email === email);
+
+      if (!email) {
+        showError("Please enter your email.");
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        showError("Enter a valid email format.");
+        return;
+      }
+
+      if (!user) {
+        showError("No account found with this email.");
+        return;
+      }
+
+      generatedOTP = Math.floor(100000 + Math.random() * 900000);
+      verifiedEmail = email;
+      showError("");
+
+      alert(`Your OTP (for demo): ${generatedOTP}`);
+
+      document.getElementById("email-section").style.display = "none";
+      document.getElementById("otp-section").style.display = "block";
+
+      startTimer();
+    }
+
+    // Verify OTP
+    function verifyOTP() {
+      const enteredOTP = document.getElementById("otpInput").value.trim();
+
+      if (enteredOTP === generatedOTP.toString()) {
+        clearInterval(timerInterval);
+        showError("");
+        document.getElementById("otp-section").style.display = "none";
+        document.getElementById("reset-section").style.display = "block";
+      } else {
+        showError("Invalid OTP. Please try again.");
+      }
+    }
+
+    // Reset Password
+    function resetPassword() {
+      const newPassword = document.getElementById("newPassword").value.trim();
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      if (
+        !newPassword.match(
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/
+        )
+      ) {
+        showError(
+          "Password must have letters, numbers & special characters (min 6 chars)."
+        );
+        return;
+      }
+
+      const updatedUsers = users.map((u) =>
+        u.email === verifiedEmail ? { ...u, password: newPassword } : u
+      );
+
+      localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+      alert("✅ Password reset successful! Please login again.");
+      window.location.href = "index.html";
+    }
+
+    // Helper Functions
+    function showError(msg) {
+      document.getElementById("error").textContent = msg;
+    }
+
+    function validateEmail(email) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(email);
+    }
+
+    // OTP Timer (valid for 1 minute)
+    function startTimer() {
+      let timeLeft = 60;
+      const timerDisplay = document.getElementById("timer");
+
+      timerInterval = setInterval(() => {
+        timerDisplay.textContent = `⏱ OTP valid for ${timeLeft}s`;
+        timeLeft--;
+
+        if (timeLeft < 0) {
+          clearInterval(timerInterval);
+          generatedOTP = null;
+          timerDisplay.textContent = "❌ OTP expired. Please resend.";
+          document.getElementById("otp-section").style.display = "none";
+          document.getElementById("email-section").style.display = "block";
+        }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
